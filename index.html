@@ -45,11 +45,13 @@
     footer{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
     video{width:100%;max-height:400px;border-radius:var(--radius);margin-top:16px}
     .link-icons{display:flex;gap:18px;margin-top:8px;align-items:center}
-    .link-icons img{width:36px;height:36px;opacity:0.85;transition:opacity .2s, transform .2s}
+    .link-icons img{width:36px;height:36px;opacity:0.85;transition:opacity .2s, transform .2s;filter:invert(90%) brightness(120%)}
     .link-icons img:hover{opacity:1;transform:scale(1.08)}
     .gallery-scroll{max-height:180px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;padding-right:8px}
     .gallery-scroll img{width:100%;border-radius:10px;object-fit:cover}
     #terryDiv{text-align:center;font-weight:700;color:#ff7b7b;margin:12px 0;font-size:18px;letter-spacing:0.5px;text-shadow:0 0 12px rgba(255,0,0,0.4)}
+    .project-card{margin-top:16px;padding:16px;border-radius:12px;background:linear-gradient(145deg,rgba(255,59,59,0.1),rgba(255,59,59,0.03));border:1px solid rgba(255,59,59,0.3);box-shadow:0 0 12px rgba(255,59,59,0.2);transition:transform .2s, box-shadow .3s}
+    .project-card:hover{transform:scale(1.02);box-shadow:0 0 22px rgba(255,59,59,0.35)}
     @media (max-width:880px){.container{grid-template-columns:1fr}.header-row{flex-direction:column;align-items:flex-start}.avatar{width:120px;height:120px}}
   </style>
 </head>
@@ -99,7 +101,17 @@
         </section>
 
         <section class="section">
-          <video src="about-me/TD/TD.mp4" autoplay loop muted controls></video>
+          <h4 style="margin:0 0 8px 0">Project</h4>
+          <div class="project-card">
+            <a href="https://sidewalksndskeletons.github.io/gamescope-gui/" target="_blank" style="text-decoration:none;color:#fff;font-weight:600;display:flex;align-items:center;gap:10px;">
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="28" height="28" style="filter:invert(100%) brightness(120%)" alt="GitHub" />
+              <span>Owner of gamescope-gui</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="section">
+          <video src="TD/TD.mp4" autoplay loop muted controls></video>
         </section>
 
         <section class="section">
@@ -138,7 +150,7 @@
     const imageNames = ['1.jpg','2.jpg','3.jpg','4.jpg','5.jpg'];
     imageNames.forEach(name => {
       const img = document.createElement('img');
-      img.src = `/images/${name}`;
+      img.src = `images/${name}`; // fixed relative path
       img.alt = name;
       gallery.appendChild(img);
     });
