@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>sidewalksndskeletons — About</title>
   <meta name="description" content="sidewalksndskeletons — RIP King Terry Davis. GNU/Linux enjoyer." />
+  <!-- Comments in this file are kept as HTML comments as requested -->
+  <!-- Avatar is loaded dynamically from the repo's pfp/ folder if present -->
+  <!-- Gallery loads all images from about-me/images/ via GitHub API -->
   <style>
     :root{
       --bg1:#0b0b0d; --bg2:#0f1720; --accent:#ff3b3b; --muted:#9aa3b2;
@@ -25,7 +28,6 @@
 
     .card{background:var(--card);border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px);padding:22px;border-radius:var(--radius);box-shadow:0 8px 30px rgba(0,0,0,0.6)}
 
-    /* Sidebar */
     .avatar-wrap{width:160px;height:160px;border-radius:50%;overflow:hidden;border:4px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#111315,#1a1d22);margin:0 auto}
     .avatar-wrap img{width:100%;height:100%;object-fit:cover;display:block}
     .avatar-initials{font-weight:800;font-size:28px;color:#d9dde3}
@@ -40,7 +42,6 @@
 
     .btn{display:inline-block;padding:10px 16px;border-radius:999px;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(90deg, rgba(255,59,59,0.14), rgba(255,59,59,0.06));}
 
-    /* Main */
     main{min-height:320px}
     .header{display:flex;justify-content:space-between;align-items:start}
     .nickname{font-family:var(--mono);font-size:20px;background:linear-gradient(90deg,#ffffff,#ffb3b3);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -55,13 +56,11 @@
 
     #terryDiv{margin-top:12px;text-align:center;font-weight:700;color:var(--accent)}
 
-    /* Video on right inside the main card */
     .bio-video{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
     .bio-video video{width:100%;height:100%;max-height:360px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);object-fit:cover}
 
     .project-card{margin-top:16px;padding:14px;border-radius:12px;background:linear-gradient(145deg,rgba(255,59,59,0.06),rgba(255,59,59,0.02));border:1px solid rgba(255,59,59,0.12);box-shadow:0 6px 18px rgba(0,0,0,0.6)}
 
-    /* Lightbox */
     .lightbox{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,4,6,0.8);z-index:9999;opacity:0;pointer-events:none;transition:opacity .18s}
     .lightbox.show{opacity:1;pointer-events:auto}
     .lightbox img{max-width:90vw;max-height:90vh;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.7)}
@@ -94,8 +93,8 @@
 
       <div class="stats" style="margin-top:18px">
         <div class="stat">
-          <div class="value" id="visitorCount">...</div>
-          <div class="label">visitors (local)</div>
+          <div class="value" id="visitorCount">more than urs 🤣</div>
+          <div class="label">visitors</div>
         </div>
       </div>
 
@@ -154,47 +153,6 @@
 
   <script>
     (function(){
-      // LOCAL visitor counter only
-      const key = 'sidewalksndskeletons_visitors_local';
-      let v = parseInt(localStorage.getItem(key) || '0', 10);
-      v = v + 1;
-      localStorage.setItem(key, v);
-      document.getElementById('visitorCount').textContent = v;
-
-      // Dynamic profile picture: try various paths under /pfp/ or about-me/pfp/
-      const avatarWrap = document.getElementById('avatarWrap');
-      const initials = document.createElement('div'); initials.className = 'avatar-initials'; initials.textContent = 'S K';
-
-      const prefixes = ['pfp','about-me/pfp','/pfp','/about-me/pfp'];
-      const names = ['pfp','avatar','profile','1','me'];
-      const exts = ['png','jpg','jpeg','webp','svg'];
-
-      function tryLoad(src){
-        return new Promise((resolve,reject)=>{
-          const img = new Image(); img.onload = ()=>resolve(src); img.onerror = ()=>reject(); img.src = src;
-        });
-      }
-
-      (async function findPfp(){
-        for(const p of prefixes){
-          for(const n of names){
-            for(const e of exts){
-              const src = `${p}/${n}.${e}`;
-              try{
-                await tryLoad(src);
-                // found
-                const imgEl = document.createElement('img'); imgEl.src = src; imgEl.alt='pfp';
-                avatarWrap.innerHTML=''; avatarWrap.appendChild(imgEl);
-                return;
-              }catch(_){ }
-            }
-          }
-        }
-        // fallback: keep initials
-        avatarWrap.innerHTML=''; avatarWrap.appendChild(initials);
-      })();
-
-      // Gallery: load images from GitHub repo 'about-me' images folder; support many formats
       const owner = 'sidewalksndskeletons';
       const repo = 'about-me';
       const imagesPath = 'images';
@@ -222,65 +180,43 @@
             img.addEventListener('click', ()=> openLightbox(urls.indexOf(url)) );
             galleryEl.appendChild(img);
           });
-          // initialize lightbox navigation
           initLightbox(urls);
         }catch(err){
           console.warn('Failed to load images from GitHub API:', err);
-          // fallback: try relative folder paths (try many names up to 40)
-          const fallbackNames = Array.from({length:40}, (_,i)=> String(i+1));
-          const exts = ['jpg','jpeg','png','webp','gif','svg'];
-          const urls = [];
-          for(const n of fallbackNames){
-            for(const e of exts){
-              const candidate = `images/${n}.${e}?v=${cacheBust}`;
-              const img = new Image();
-              img.onload = () => {
-                const el = document.createElement('img'); el.src = candidate; el.alt = n; el.addEventListener('click', ()=> openLightbox(urls.indexOf(candidate)) ); galleryEl.appendChild(el);
-                urls.push(candidate);
-                if(!window._lbInit) initLightbox(urls);
-              };
-              img.onerror = ()=>{};
-              img.src = candidate;
-            }
-          }
         }
       }
       loadRepoImages();
 
-      // Lightbox logic
+      async function loadPfpFromRepo(){
+        try{
+          const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/pfp`;
+          const res = await fetch(apiUrl);
+          if(!res.ok) throw new Error('no pfp path');
+          const files = await res.json();
+          const imgs = files.filter(f => f.type === 'file' && isImage(f.name));
+          if(imgs.length === 0) throw new Error('no image in pfp folder');
+          const first = imgs[0];
+          const imgEl = document.createElement('img'); imgEl.src = first.download_url + '?v=' + cacheBust; imgEl.alt = 'pfp';
+          const avatarWrap = document.getElementById('avatarWrap'); avatarWrap.innerHTML=''; avatarWrap.appendChild(imgEl);
+          return;
+        }catch(err){
+          const avatarWrap = document.getElementById('avatarWrap'); avatarWrap.innerHTML=''; const initials = document.createElement('div'); initials.className='avatar-initials'; initials.textContent='S K'; avatarWrap.appendChild(initials);
+        }
+      }
+      loadPfpFromRepo();
+
       const lightbox = document.getElementById('lightbox');
       const lbImg = document.getElementById('lbImg');
       const lbPrev = document.getElementById('lbPrev');
       const lbNext = document.getElementById('lbNext');
       let lbUrls = [];
       let lbIndex = 0;
-
-      function initLightbox(urls){
-        window._lbInit = true;
-        lbUrls = urls.slice();
-        document.addEventListener('keydown', (e)=>{
-          if(!lightbox.classList.contains('show')) return;
-          if(e.key === 'ArrowLeft') showPrev();
-          if(e.key === 'ArrowRight') showNext();
-          if(e.key === 'Escape') closeLightbox();
-        });
-        lbPrev.addEventListener('click', showPrev);
-        lbNext.addEventListener('click', showNext);
-        lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) closeLightbox(); });
-      }
-
-      function openLightbox(index){
-        if(!lbUrls || lbUrls.length === 0) return;
-        lbIndex = index;
-        lbImg.src = lbUrls[lbIndex];
-        lightbox.classList.add('show');
-        lightbox.setAttribute('aria-hidden','false');
-      }
+      function initLightbox(urls){ window._lbInit = true; lbUrls = urls.slice(); document.addEventListener('keydown', (e)=>{ if(!lightbox.classList.contains('show')) return; if(e.key === 'ArrowLeft') showPrev(); if(e.key === 'ArrowRight') showNext(); if(e.key === 'Escape') closeLightbox(); }); lbPrev.addEventListener('click', showPrev); lbNext.addEventListener('click', showNext); lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) closeLightbox(); }); }
+      function openLightbox(index){ if(!lbUrls || lbUrls.length === 0) return; lbIndex = index; lbImg.src = lbUrls[lbIndex]; lightbox.classList.add('show'); lightbox.setAttribute('aria-hidden','false'); }
       function closeLightbox(){ lightbox.classList.remove('show'); lightbox.setAttribute('aria-hidden','true'); lbImg.src=''; }
       function showPrev(){ lbIndex = (lbIndex - 1 + lbUrls.length) % lbUrls.length; lbImg.src = lbUrls[lbIndex]; }
       function showNext(){ lbIndex = (lbIndex + 1) % lbUrls.length; lbImg.src = lbUrls[lbIndex]; }
 
-      // Video loaders — try common paths with cache-bust
       (async function setVideo(){
         const videoEl = document.getElementById('terryVid');
         const candidates = ['about-me/TD/TD.mp4','TD/TD.mp4','about-me/TD.mp4','/about-me/TD/TD.mp4','/TD/TD.mp4'];
@@ -293,7 +229,6 @@
             videoEl.src = src; return;
           }catch(_){ }
         }
-        // nothing found
         videoEl.remove();
       })();
 
