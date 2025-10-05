@@ -11,6 +11,7 @@
       --card:rgba(255,255,255,0.04); --glass:rgba(255,255,255,0.03); --radius:18px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono", "Helvetica Neue", monospace;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%;margin:0}
     body{
@@ -21,30 +22,49 @@
     }
 
     .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:320px 1fr;gap:28px;align-items:start}
+
     .card{background:var(--card);border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px);padding:22px;border-radius:var(--radius);box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+
+    /* Sidebar */
     aside .avatar{width:160px;height:160px;border-radius:50%;overflow:hidden;border:4px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;background:linear-gradient(135deg,#111315,#1a1d22);margin:0 auto}
     aside h1{margin:12px 0 0 0;text-align:center;font-size:20px}
     aside h2{margin:6px 0 0 0;text-align:center;color:var(--muted);font-size:13px}
+
     .stats{display:flex;gap:12px;margin-top:18px}
     .stat{flex:1;background:var(--glass);padding:10px;border-radius:12px;text-align:center}
     .stat .value{font-weight:700;font-size:18px}
     .stat .label{font-size:12px;color:var(--muted)}
+
     .btn{display:inline-block;padding:10px 16px;border-radius:999px;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(90deg, rgba(255,59,59,0.14), rgba(255,59,59,0.06));}
+
+    /* Main */
     main{min-height:320px}
     .header{display:flex;justify-content:space-between;align-items:start}
     .nickname{font-family:var(--mono);font-size:20px;background:linear-gradient(90deg,#ffffff,#ffb3b3);-webkit-background-clip:text;background-clip:text;color:transparent}
     .section{margin-top:20px;padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border:1px solid rgba(255,255,255,0.02)}
+
     .links{display:flex;justify-content:center;gap:12px;margin-top:12px}
     .links img{width:34px;height:34px;filter:invert(100%) brightness(130%);opacity:0.88;transition:transform .15s,opacity .15s}
     .links img:hover{transform:scale(1.08);opacity:1}
-    .gallery-scroll{max-height:240px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;padding-right:8px}
-    .gallery-scroll img{width:100%;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.03)}
+
+    .gallery-scroll{max-height:360px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding-right:8px}
+    .gallery-scroll img{width:100%;height:140px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.03)}
+
     #terryDiv{margin-top:12px;text-align:center;font-weight:700;color:var(--accent)}
+
+    /* Video on right inside the main card */
     .bio-video{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
     .bio-video video{width:100%;height:100%;max-height:360px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);object-fit:cover}
+
     .project-card{margin-top:16px;padding:14px;border-radius:12px;background:linear-gradient(145deg,rgba(255,59,59,0.06),rgba(255,59,59,0.02));border:1px solid rgba(255,59,59,0.12);box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+
     footer{text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
-    @media (max-width:920px){ .wrap{grid-template-columns:1fr} .bio-video{grid-template-columns:1fr} .bio-video video{order:-1;margin-bottom:12px} }
+
+    @media (max-width:920px){
+      .wrap{grid-template-columns:1fr}
+      .bio-video{grid-template-columns:1fr}
+      .bio-video video{order:-1;margin-bottom:12px}
+    }
   </style>
 </head>
 <body>
@@ -81,7 +101,6 @@
           <h1 style="margin:8px 0 0 0">About</h1>
           <p style="color:var(--muted);margin-top:8px">Retro shooter energy — dark contrasts, neon accents.</p>
         </div>
-        <div style="text-align:right;color:var(--muted);font-size:13px">Member since 2003</div>
       </div>
 
       <section class="section bio-video">
@@ -89,14 +108,11 @@
           <h3 style="margin-top:0">Bio</h3>
           <p style="color:#dbe8ff;font-weight:600">I’m all about GNU and Linux — free as in freedom, not just free coffee. I live in the terminal and sometimes it lives in me.</p>
 
-          <h4 style="margin-top:14px">Linux humor (reddit vibes)</h4>
-          <ul style="color:#dbe8ff;margin-top:8px">
-            <li>"I use Arch" — the eternal status update.</li>
-            <li>When your server is healthy but your commit history isn't.</li>
-            <li>That feeling when <code>sudo</code> actually solves the problem.</li>
-            <li>If it compiles, ship it; if it segfaults, that's a feature.</li>
-            <li>My uptime is a flex I can't stop showing off.</li>
-          </ul>
+          <h4 style="margin-top:14px">Linux humor</h4>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:8px;color:#dbe8ff">
+            <img src="https://cdn.simpleicons.org/archlinux/ffffff" alt="arch" width="28" height="28" style="filter:invert(100%) brightness(140%)" />
+            <div style="font-weight:700;">i use arch btw</div>
+          </div>
 
           <div class="project-card">
             <a href="https://sidewalksndskeletons.github.io/gamescope-gui/" target="_blank" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px">
@@ -107,7 +123,6 @@
         </div>
 
         <div>
-          <!-- controls included so user can unmute -->
           <video id="terryVid" autoplay loop muted playsinline controls></video>
 
           <div style="margin-top:14px">
@@ -123,47 +138,36 @@
 
   <script>
     (function(){
-      // 1) VISITOR COUNT: try CountAPI (global). If fails, fallback to localStorage.
-      const countElement = document.getElementById('visitorCount');
-      const countKeyLocal = 'sidewalksndskeletons_visitors_local';
+      // Use CountAPI for global counter; fallback to local if CountAPI fails
+      const counterEl = document.getElementById('visitorCount');
+      const countAPIKey = 'sidewalksndskeletons_about';
 
-      // Try global CountAPI first
-      const countApiNamespace = 'sidewalksndskeletons_about';
-      const countApiKey = 'visits';
-
-      fetch(`https://api.countapi.xyz/hit/${encodeURIComponent(countApiNamespace)}/${encodeURIComponent(countApiKey)}`)
-        .then(r => r.json())
-        .then(d => {
+      fetch(`https://api.countapi.xyz/hit/${encodeURIComponent(countAPIKey)}/visits`)
+        .then(r=>r.json())
+        .then(d=>{
           if(d && typeof d.value === 'number'){
-            countElement.textContent = d.value;
-            // also update local mirror so user sees something if API later fails
-            try { localStorage.setItem(countKeyLocal, String(d.value)); } catch(e) {}
+            counterEl.textContent = d.value;
+            try{ localStorage.setItem('sidewalksndskeletons_visitors_local', String(d.value)); } catch(e){}
             return;
           }
           throw new Error('bad response');
         })
-        .catch(() => {
-          // fallback: persistent local counter (increment once per browser)
-          let localC = parseInt(localStorage.getItem(countKeyLocal) || '0', 10);
-          localC = localC + 1;
-          localStorage.setItem(countKeyLocal, String(localC));
-          countElement.textContent = localC + ' (local)';
+        .catch(()=>{
+          // fallback local increment (persistent per-browser)
+          let local = parseInt(localStorage.getItem('sidewalksndskeletons_visitors_local') || '0', 10);
+          local = local + 1;
+          localStorage.setItem('sidewalksndskeletons_visitors_local', String(local));
+          counterEl.textContent = local + ' (local)';
         });
 
-      // 2) GALLERY: fetch images list from GitHub repo contents (public)
-      // Repo info:
+      // Gallery: fetch images list from GitHub repo contents (public) and support many formats
       const owner = 'sidewalksndskeletons';
-      const repo = 'about-me'; // adjust if your repo name is different
+      const repo = 'about-me';
       const imagesPath = 'images';
       const galleryEl = document.getElementById('gallery');
       const cacheBust = Date.now();
-
-      // allowed extensions
       const allowed = ['.png','.jpg','.jpeg','.webp','.gif','.svg'];
-      function isImage(name){
-        const lower = name.toLowerCase();
-        return allowed.some(ext => lower.endsWith(ext));
-      }
+      function isImage(name){ const lower = name.toLowerCase(); return allowed.some(ext => lower.endsWith(ext)); }
 
       async function loadRepoImages(){
         try{
@@ -171,16 +175,13 @@
           const res = await fetch(apiUrl);
           if(!res.ok) throw new Error('no images path or rate-limited');
           const files = await res.json();
-          // files is an array with fields: name, download_url, type
           const images = files.filter(f => f.type === 'file' && isImage(f.name));
           if(images.length === 0){
             galleryEl.innerHTML = '<div style="color:var(--muted)">No images found in repo path: ' + imagesPath + '</div>';
             return;
           }
-          // append all images
           images.forEach(file => {
             const img = document.createElement('img');
-            // use GitHub CDN download_url (append cacheBust)
             const url = file.download_url + '?v=' + cacheBust;
             img.src = url;
             img.alt = file.name;
@@ -190,8 +191,8 @@
           });
         }catch(err){
           console.warn('Failed to load images from GitHub API:', err);
-          // fallback: try relative folder paths (in case name or repo differs)
-          const fallbackNames = Array.from({length:20}, (_,i)=> String(i+1)); // try 1..20
+          // fallback: try relative folder paths (try many names)
+          const fallbackNames = Array.from({length:40}, (_,i)=> String(i+1));
           const exts = ['jpg','jpeg','png','webp','gif','svg'];
           for(const n of fallbackNames){
             for(const e of exts){
@@ -207,32 +208,21 @@
       }
       loadRepoImages();
 
-      // 3) VIDEO: try a few likely video paths on the repo (with cache-bust)
+      // Video loaders — try common paths with cache-bust
       (async function setVideo(){
         const videoEl = document.getElementById('terryVid');
-        const candidates = [
-          'about-me/TD/TD.mp4',
-          'TD/TD.mp4',
-          'about-me/TD.mp4',
-          '/about-me/TD/TD.mp4',
-          '/TD/TD.mp4'
-        ];
+        const candidates = ['about-me/TD/TD.mp4','TD/TD.mp4','about-me/TD.mp4','/about-me/TD/TD.mp4','/TD/TD.mp4'];
         for(const c of candidates){
           try{
             const src = `${c}?v=${cacheBust}`;
-            // try preload metadata
-            await new Promise((resolve, reject) => {
+            await new Promise((resolve,reject)=>{
               const t = document.createElement('video');
-              t.preload = 'metadata';
-              t.onloadedmetadata = () => resolve();
-              t.onerror = () => reject();
-              t.src = src;
+              t.preload='metadata'; t.onloadedmetadata = ()=> resolve(); t.onerror = ()=> reject(); t.src = src;
             });
-            videoEl.src = `${c}?v=${cacheBust}`;
+            videoEl.src = src;
             return;
-          }catch(_){}
+          }catch(_){ }
         }
-        // no video found: hide element
         videoEl.remove();
       })();
 
