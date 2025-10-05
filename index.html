@@ -5,8 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>sidewalksndskeletons</title>
 <style>
+  @keyframes glow {
+    0% { text-shadow: 0 0 5px #f00, 0 0 10px #f00; }
+    100% { text-shadow: 0 0 15px #f22, 0 0 25px #f22; }
+  }
+
   body {
-    background: radial-gradient(circle at top, #0a0a0a, #000);
+    background: radial-gradient(circle at top, #0a0a0a 0%, #000 100%);
     color: #eee;
     font-family: 'Courier New', monospace;
     display: flex;
@@ -14,34 +19,38 @@
     align-items: flex-start;
     padding: 40px;
     gap: 40px;
+    user-select: none;
   }
 
   .sidebar {
     width: 260px;
-    background: #0e0e0e;
+    background: linear-gradient(180deg, #0d0d0d 0%, #050505 100%);
+    border: 1px solid #111;
     border-radius: 16px;
     padding: 24px;
     text-align: center;
-    box-shadow: 0 0 20px #111;
+    box-shadow: 0 0 30px #100;
   }
 
   .pfp {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     margin: 0 auto 10px;
-    background: linear-gradient(145deg, #111, #000);
+    background: radial-gradient(circle, #111 0%, #000 80%);
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
     font-size: 22px;
     color: #ccc;
+    border: 2px solid #222;
   }
 
   .sidebar h1 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin: 10px 0;
+    color: #fff;
   }
 
   .sidebar p {
@@ -53,7 +62,7 @@
     display: flex;
     justify-content: center;
     gap: 16px;
-    margin: 16px 0;
+    margin: 18px 0;
   }
 
   .links img {
@@ -64,39 +73,51 @@
 
   .links img:hover {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.15);
+  }
+
+  .rip {
+    color: #f55;
+    font-weight: bold;
+    animation: glow 1.5s infinite alternate;
   }
 
   .content {
-    width: 600px;
-    background: #0e0e0e;
+    width: 620px;
+    background: linear-gradient(180deg, #0d0d0d, #050505);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 0 20px #111;
+    box-shadow: 0 0 30px #100;
+    border: 1px solid #111;
     position: relative;
   }
 
   .about h2 {
     margin-top: 0;
+    color: #fff;
+    border-bottom: 1px solid #222;
+    padding-bottom: 4px;
   }
 
   .about ul {
-    list-style: disc;
+    list-style: "› ";
     padding-left: 20px;
+    color: #ccc;
   }
 
   #terryVid {
     position: absolute;
     right: 24px;
     top: 24px;
-    width: 220px;
+    width: 240px;
     height: 160px;
     border-radius: 12px;
     object-fit: cover;
+    border: 1px solid #222;
   }
 
   .project {
-    background: #1b1b1b;
+    background: #111;
     padding: 16px;
     border-radius: 12px;
     margin-top: 24px;
@@ -105,7 +126,7 @@
 
   .gallery {
     margin-top: 24px;
-    background: #1b1b1b;
+    background: #111;
     padding: 10px;
     border-radius: 12px;
     overflow-x: auto;
@@ -114,9 +135,11 @@
 
   .gallery img {
     width: 80px;
+    height: 80px;
     margin: 5px;
     border-radius: 8px;
     display: inline-block;
+    border: 1px solid #222;
   }
 
   #visitorDisplay {
@@ -147,7 +170,7 @@
       </a>
     </div>
 
-    <p style="color:red;margin:6px 0;">RIP King Terry Davis ❤️</p>
+    <p class="rip">RIP King Terry Davis ❤️</p>
     <p>sidewalksndskeletons@gmail.com</p>
     <div id="visitorDisplay"></div>
   </div>
@@ -157,13 +180,16 @@
 
     <div class="about">
       <h2>About</h2>
-      <p>I'm all about GNU and Linux — free as in freedom, not just free coffee.<br>
-      I live in the terminal and sometimes it lives in me.</p>
+      <p>
+        I'm all about GNU/Linux — free as in freedom, not just free coffee.<br>
+        I live in the terminal, and sometimes it lives in me.
+      </p>
       <ul>
-        <li>My uptime is longer than most servers’ warranty.</li>
-        <li>sudo make me a sandwich — and it obeys.</li>
-        <li>I don't reboot. I respawn.</li>
-        <li>If it compiles, it ships. If it segfaults, that’s a feature.</li>
+        <li>“I use Arch, btw” — me, every five minutes.</li>
+        <li>99 problems, but a Windows update ain’t one.</li>
+        <li>My uptime survived three kernel panics.</li>
+        <li>In Vim, no one can hear you scream.</li>
+        <li>sudo make me a sandwich. It worked once.</li>
       </ul>
     </div>
 
@@ -188,7 +214,7 @@
   localStorage.setItem(counterKey, count);
   document.getElementById('visitorDisplay').textContent = `Visitors (local): ${count}`;
 
-  // Dynamic gallery with multi-extension support + cache buster
+  // Dynamic gallery with cache buster
   const gallery = document.getElementById('gallery');
   const imageNames = ['1', '2', '3', '4', '5', '6'];
   const exts = ['jpg', 'jpeg', 'png', 'webp'];
