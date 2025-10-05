@@ -26,7 +26,10 @@
     .card{background:var(--card);border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px);padding:22px;border-radius:var(--radius);box-shadow:0 8px 30px rgba(0,0,0,0.6)}
 
     /* Sidebar */
-    aside .avatar{width:160px;height:160px;border-radius:50%;overflow:hidden;border:4px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;background:linear-gradient(135deg,#111315,#1a1d22);margin:0 auto}
+    .avatar-wrap{width:160px;height:160px;border-radius:50%;overflow:hidden;border:4px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#111315,#1a1d22);margin:0 auto}
+    .avatar-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+    .avatar-initials{font-weight:800;font-size:28px;color:#d9dde3}
+
     aside h1{margin:12px 0 0 0;text-align:center;font-size:20px}
     aside h2{margin:6px 0 0 0;text-align:center;color:var(--muted);font-size:13px}
 
@@ -47,8 +50,8 @@
     .links img{width:34px;height:34px;filter:invert(100%) brightness(130%);opacity:0.88;transition:transform .15s,opacity .15s}
     .links img:hover{transform:scale(1.08);opacity:1}
 
-    .gallery-scroll{max-height:360px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding-right:8px}
-    .gallery-scroll img{width:100%;height:140px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.03)}
+    .gallery-scroll{max-height:420px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding-right:8px}
+    .gallery-scroll img{width:100%;height:160px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
 
     #terryDiv{margin-top:12px;text-align:center;font-weight:700;color:var(--accent)}
 
@@ -57,6 +60,13 @@
     .bio-video video{width:100%;height:100%;max-height:360px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);object-fit:cover}
 
     .project-card{margin-top:16px;padding:14px;border-radius:12px;background:linear-gradient(145deg,rgba(255,59,59,0.06),rgba(255,59,59,0.02));border:1px solid rgba(255,59,59,0.12);box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,4,6,0.8);z-index:9999;opacity:0;pointer-events:none;transition:opacity .18s}
+    .lightbox.show{opacity:1;pointer-events:auto}
+    .lightbox img{max-width:90vw;max-height:90vh;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.7)}
+    .lightbox .nav{position:absolute;left:10px;right:10px;top:50%;display:flex;justify-content:space-between;transform:translateY(-50%)}
+    .lb-btn{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.05);color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
 
     footer{text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
 
@@ -70,7 +80,7 @@
 <body>
   <div class="wrap">
     <aside class="card">
-      <div class="avatar">S K</div>
+      <div class="avatar-wrap" id="avatarWrap"><div class="avatar-initials">S K</div></div>
       <h1>sidewalksndskeletons</h1>
       <h2>Gamer • Tinkerer • GNU/Linux enjoyer</h2>
 
@@ -85,7 +95,7 @@
       <div class="stats" style="margin-top:18px">
         <div class="stat">
           <div class="value" id="visitorCount">...</div>
-          <div class="label">visitors</div>
+          <div class="label">visitors (local)</div>
         </div>
       </div>
 
@@ -99,7 +109,6 @@
         <div>
           <div class="nickname">sidewalksndskeletons</div>
           <h1 style="margin:8px 0 0 0">About</h1>
-          <p style="color:var(--muted);margin-top:8px">Retro shooter energy — dark contrasts, neon accents.</p>
         </div>
       </div>
 
@@ -136,31 +145,56 @@
     </main>
   </div>
 
+  <!-- Lightbox markup -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <button class="lb-btn" id="lbPrev" style="position:absolute;left:18px;">❮</button>
+    <img id="lbImg" src="" alt="" />
+    <button class="lb-btn" id="lbNext" style="position:absolute;right:18px;">❯</button>
+  </div>
+
   <script>
     (function(){
-      // Use CountAPI for global counter; fallback to local if CountAPI fails
-      const counterEl = document.getElementById('visitorCount');
-      const countAPIKey = 'sidewalksndskeletons_about';
+      // LOCAL visitor counter only
+      const key = 'sidewalksndskeletons_visitors_local';
+      let v = parseInt(localStorage.getItem(key) || '0', 10);
+      v = v + 1;
+      localStorage.setItem(key, v);
+      document.getElementById('visitorCount').textContent = v;
 
-      fetch(`https://api.countapi.xyz/hit/${encodeURIComponent(countAPIKey)}/visits`)
-        .then(r=>r.json())
-        .then(d=>{
-          if(d && typeof d.value === 'number'){
-            counterEl.textContent = d.value;
-            try{ localStorage.setItem('sidewalksndskeletons_visitors_local', String(d.value)); } catch(e){}
-            return;
-          }
-          throw new Error('bad response');
-        })
-        .catch(()=>{
-          // fallback local increment (persistent per-browser)
-          let local = parseInt(localStorage.getItem('sidewalksndskeletons_visitors_local') || '0', 10);
-          local = local + 1;
-          localStorage.setItem('sidewalksndskeletons_visitors_local', String(local));
-          counterEl.textContent = local + ' (local)';
+      // Dynamic profile picture: try various paths under /pfp/ or about-me/pfp/
+      const avatarWrap = document.getElementById('avatarWrap');
+      const initials = document.createElement('div'); initials.className = 'avatar-initials'; initials.textContent = 'S K';
+
+      const prefixes = ['pfp','about-me/pfp','/pfp','/about-me/pfp'];
+      const names = ['pfp','avatar','profile','1','me'];
+      const exts = ['png','jpg','jpeg','webp','svg'];
+
+      function tryLoad(src){
+        return new Promise((resolve,reject)=>{
+          const img = new Image(); img.onload = ()=>resolve(src); img.onerror = ()=>reject(); img.src = src;
         });
+      }
 
-      // Gallery: fetch images list from GitHub repo contents (public) and support many formats
+      (async function findPfp(){
+        for(const p of prefixes){
+          for(const n of names){
+            for(const e of exts){
+              const src = `${p}/${n}.${e}`;
+              try{
+                await tryLoad(src);
+                // found
+                const imgEl = document.createElement('img'); imgEl.src = src; imgEl.alt='pfp';
+                avatarWrap.innerHTML=''; avatarWrap.appendChild(imgEl);
+                return;
+              }catch(_){ }
+            }
+          }
+        }
+        // fallback: keep initials
+        avatarWrap.innerHTML=''; avatarWrap.appendChild(initials);
+      })();
+
+      // Gallery: load images from GitHub repo 'about-me' images folder; support many formats
       const owner = 'sidewalksndskeletons';
       const repo = 'about-me';
       const imagesPath = 'images';
@@ -180,33 +214,71 @@
             galleryEl.innerHTML = '<div style="color:var(--muted)">No images found in repo path: ' + imagesPath + '</div>';
             return;
           }
+          const urls = [];
           images.forEach(file => {
-            const img = document.createElement('img');
             const url = file.download_url + '?v=' + cacheBust;
-            img.src = url;
-            img.alt = file.name;
-            img.loading = 'lazy';
-            img.onerror = () => { img.remove(); };
+            urls.push(url);
+            const img = document.createElement('img'); img.src = url; img.alt = file.name; img.loading = 'lazy'; img.onerror = ()=>img.remove();
+            img.addEventListener('click', ()=> openLightbox(urls.indexOf(url)) );
             galleryEl.appendChild(img);
           });
+          // initialize lightbox navigation
+          initLightbox(urls);
         }catch(err){
           console.warn('Failed to load images from GitHub API:', err);
-          // fallback: try relative folder paths (try many names)
+          // fallback: try relative folder paths (try many names up to 40)
           const fallbackNames = Array.from({length:40}, (_,i)=> String(i+1));
           const exts = ['jpg','jpeg','png','webp','gif','svg'];
+          const urls = [];
           for(const n of fallbackNames){
             for(const e of exts){
               const candidate = `images/${n}.${e}?v=${cacheBust}`;
               const img = new Image();
-              img.onload = () => galleryEl.appendChild(img);
-              img.onerror = () => {};
+              img.onload = () => {
+                const el = document.createElement('img'); el.src = candidate; el.alt = n; el.addEventListener('click', ()=> openLightbox(urls.indexOf(candidate)) ); galleryEl.appendChild(el);
+                urls.push(candidate);
+                if(!window._lbInit) initLightbox(urls);
+              };
+              img.onerror = ()=>{};
               img.src = candidate;
-              img.alt = n;
             }
           }
         }
       }
       loadRepoImages();
+
+      // Lightbox logic
+      const lightbox = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lbImg');
+      const lbPrev = document.getElementById('lbPrev');
+      const lbNext = document.getElementById('lbNext');
+      let lbUrls = [];
+      let lbIndex = 0;
+
+      function initLightbox(urls){
+        window._lbInit = true;
+        lbUrls = urls.slice();
+        document.addEventListener('keydown', (e)=>{
+          if(!lightbox.classList.contains('show')) return;
+          if(e.key === 'ArrowLeft') showPrev();
+          if(e.key === 'ArrowRight') showNext();
+          if(e.key === 'Escape') closeLightbox();
+        });
+        lbPrev.addEventListener('click', showPrev);
+        lbNext.addEventListener('click', showNext);
+        lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) closeLightbox(); });
+      }
+
+      function openLightbox(index){
+        if(!lbUrls || lbUrls.length === 0) return;
+        lbIndex = index;
+        lbImg.src = lbUrls[lbIndex];
+        lightbox.classList.add('show');
+        lightbox.setAttribute('aria-hidden','false');
+      }
+      function closeLightbox(){ lightbox.classList.remove('show'); lightbox.setAttribute('aria-hidden','true'); lbImg.src=''; }
+      function showPrev(){ lbIndex = (lbIndex - 1 + lbUrls.length) % lbUrls.length; lbImg.src = lbUrls[lbIndex]; }
+      function showNext(){ lbIndex = (lbIndex + 1) % lbUrls.length; lbImg.src = lbUrls[lbIndex]; }
 
       // Video loaders — try common paths with cache-bust
       (async function setVideo(){
@@ -214,15 +286,14 @@
         const candidates = ['about-me/TD/TD.mp4','TD/TD.mp4','about-me/TD.mp4','/about-me/TD/TD.mp4','/TD/TD.mp4'];
         for(const c of candidates){
           try{
-            const src = `${c}?v=${cacheBust}`;
+            const src = `${c}?v=${Date.now()}`;
             await new Promise((resolve,reject)=>{
-              const t = document.createElement('video');
-              t.preload='metadata'; t.onloadedmetadata = ()=> resolve(); t.onerror = ()=> reject(); t.src = src;
+              const t = document.createElement('video'); t.preload='metadata'; t.onloadedmetadata = ()=> resolve(); t.onerror = ()=> reject(); t.src = src;
             });
-            videoEl.src = src;
-            return;
+            videoEl.src = src; return;
           }catch(_){ }
         }
+        // nothing found
         videoEl.remove();
       })();
 
