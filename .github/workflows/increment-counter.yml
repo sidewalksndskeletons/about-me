@@ -1,0 +1,38 @@
+name: Increment visitor counter
+
+on:
+  repository_dispatch:
+    types: [increment-visitor]
+
+permissions:
+  contents: write
+
+jobs:
+  increment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Read current counter (or 0)
+        id: read
+        run: |
+          if [ -f counter.txt ]; then
+            CURRENT="$(cat counter.txt)"
+          else
+            CURRENT=0
+          fi
+          echo "CURRENT=$CURRENT" >> $GITHUB_OUTPUT
+
+      - name: Increment and write
+        id: update
+        run: |
+          NEXT=$(( ${{ steps.read.outputs.CURRENT }} + 1 ))
+          echo "$NEXT" > counter.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add counter.txt
+          git commit -m "Increment visitor counter to $NEXT" || echo "no changes"
+          git push
