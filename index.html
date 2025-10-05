@@ -1,109 +1,213 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>sidewalksndskeletons — About</title>
-  <style>
-    :root{
-      --bg1:#08090c;--bg2:#0e1117;--accent:#ff3b3b;--muted:#9aa3b2;
-      --card:rgba(255,255,255,0.05);--radius:18px;--mono:ui-monospace,monospace;
-    }
-    body{
-      margin:0;
-      font-family:Inter,system-ui;
-      background:radial-gradient(800px 600px at 20% 10%,rgba(255,59,59,0.08),transparent),
-                 linear-gradient(180deg,var(--bg1),var(--bg2));
-      color:#e9eef6;
-      padding:32px;
-    }
-    .container{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:320px 1fr;gap:28px;}
-    .card{background:var(--card);border:1px solid rgba(255,255,255,0.05);padding:22px;border-radius:var(--radius);}
-    .avatar{width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;background:#111315;}
-    h1{margin:0;font-size:28px}
-    h2{margin:0;font-size:18px;color:var(--muted)}
-    .nickname{font-family:var(--mono);font-size:20px;background:linear-gradient(90deg,#fff,#ffb3b3);-webkit-background-clip:text;color:transparent}
-    .section{margin-top:20px;padding:16px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
-    #terryDiv{text-align:center;font-weight:700;color:#ff7b7b;margin:12px 0;font-size:18px;text-shadow:0 0 12px rgba(255,0,0,0.4)}
-    .bio-video{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:center;}
-    video{width:100%;border-radius:var(--radius);}
-    .link-icons{display:flex;justify-content:center;gap:18px;margin-top:12px;}
-    .link-icons img{width:36px;height:36px;opacity:0.85;transition:0.2s;filter:invert(90%) brightness(120%)}
-    .link-icons img:hover{opacity:1;transform:scale(1.08)}
-    .gallery-scroll{max-height:180px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;padding-right:8px}
-    .gallery-scroll img{width:100%;border-radius:10px;object-fit:cover}
-    .project-card{margin-top:16px;padding:16px;border-radius:12px;background:rgba(255,59,59,0.1);border:1px solid rgba(255,59,59,0.3);}
-    footer{text-align:center;margin-top:20px;color:var(--muted);font-size:12px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sidewalksndskeletons</title>
+<style>
+  body {
+    background: radial-gradient(circle at top, #0a0a0a, #000);
+    color: #eee;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px;
+    gap: 40px;
+  }
+
+  .sidebar {
+    width: 260px;
+    background: #0e0e0e;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 0 20px #111;
+  }
+
+  .pfp {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    background: linear-gradient(145deg, #111, #000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 22px;
+    color: #ccc;
+  }
+
+  .sidebar h1 {
+    font-size: 1.2rem;
+    margin: 10px 0;
+  }
+
+  .sidebar p {
+    font-size: 0.85rem;
+    color: #888;
+  }
+
+  .links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .links img {
+    width: 28px;
+    opacity: 0.8;
+    transition: 0.2s;
+  }
+
+  .links img:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .content {
+    width: 600px;
+    background: #0e0e0e;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 0 20px #111;
+    position: relative;
+  }
+
+  .about h2 {
+    margin-top: 0;
+  }
+
+  .about ul {
+    list-style: disc;
+    padding-left: 20px;
+  }
+
+  #terryVid {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+    width: 220px;
+    height: 160px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .project {
+    background: #1b1b1b;
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 24px;
+    border: 1px solid #400;
+  }
+
+  .gallery {
+    margin-top: 24px;
+    background: #1b1b1b;
+    padding: 10px;
+    border-radius: 12px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .gallery img {
+    width: 80px;
+    margin: 5px;
+    border-radius: 8px;
+    display: inline-block;
+  }
+
+  #visitorDisplay {
+    font-size: 12px;
+    color: #777;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+</style>
 </head>
 <body>
-  <div class="container">
-    <aside class="card" style="text-align:center">
-      <div class="avatar">S K</div>
-      <h1>sidewalksndskeletons</h1>
-      <h2>GNU/Linux enjoyer</h2>
-      <div id="terryDiv">RIP King Terry Davis ❤️</div>
-      <div class="link-icons">
-        <a href="https://soundcloud.com/ryxzy" target="_blank"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/soundcloud.svg" alt="SoundCloud"></a>
-        <a href="https://www.youtube.com/@swasmi" target="_blank"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/youtube.svg" alt="YouTube"></a>
-        <a href="https://steamcommunity.com/id/Tomo_Takino/" target="_blank"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/steam.svg" alt="Steam"></a>
-      </div>
-      <p style="margin-top:18px;font-size:14px;color:#bbb">sidewalksndskeletons@gmail.com</p>
-    </aside>
 
-    <main>
-      <div class="card">
-        <div class="nickname">sidewalksndskeletons</div>
-        <h1>About</h1>
+  <div class="sidebar">
+    <div class="pfp">S K</div>
+    <h1>sidewalksndskeletons</h1>
+    <p>GNU/Linux enjoyer</p>
 
-        <section class="bio-video">
-          <div>
-            <p>I’m all about GNU and Linux — free as in freedom, not just free coffee.<br>
-            I live in the terminal and sometimes it lives in me.</p>
-            <ul>
-              <li>My uptime is longer than most servers’ warranty.</li>
-              <li>sudo make me a sandwich — and it obeys.</li>
-              <li>I don't reboot. I respawn.</li>
-              <li>If it compiles, it ships. If it segfaults, that’s a feature.</li>
-            </ul>
-          </div>
-          <video src="TD/TD.mp4" autoplay loop muted controls></video>
-        </section>
+    <div class="links">
+      <a href="https://soundcloud.com/ryxzy" target="_blank">
+        <img src="https://cdn.simpleicons.org/soundcloud/ffffff" alt="SoundCloud">
+      </a>
+      <a href="https://www.youtube.com/@swasmi" target="_blank">
+        <img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YouTube">
+      </a>
+      <a href="https://steamcommunity.com/id/Tomo_Takino/" target="_blank">
+        <img src="https://cdn.simpleicons.org/steam/ffffff" alt="Steam">
+      </a>
+    </div>
 
-        <section class="section">
-          <h4>Project</h4>
-          <div class="project-card">
-            <a href="https://sidewalksndskeletons.github.io/gamescope-gui/" target="_blank" style="color:#fff;text-decoration:none;font-weight:600;display:flex;align-items:center;gap:10px;">
-              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" width="28" height="28" style="filter:invert(100%) brightness(120%)">
-              <span>Owner of gamescope-gui</span>
-            </a>
-          </div>
-        </section>
-
-        <section class="section">
-          <h4>Gallery</h4>
-          <div class="gallery-scroll" id="gallery"></div>
-        </section>
-      </div>
-    </main>
+    <p style="color:red;margin:6px 0;">RIP King Terry Davis ❤️</p>
+    <p>sidewalksndskeletons@gmail.com</p>
+    <div id="visitorDisplay"></div>
   </div>
 
-  <script>
-    const counterKey = 'sidewalksndskeletons_about_page';
-    fetch(`https://api.countapi.xyz/hit/${counterKey}/visits`)
-      .then(r=>r.json()).then(d=>{
-        console.log('Visitor count', d.value);
-      });
+  <div class="content">
+    <video id="terryVid" autoplay loop muted playsinline></video>
 
-    // about-me/images dizinini kullan
-    const gallery = document.getElementById('gallery');
-    const imageNames = ['1.jpg','2.jpg','3.jpg','4.jpg','5.jpg'];
-    imageNames.forEach(name=>{
-      const img=document.createElement('img');
-      img.src=`/images/${name}`;
-      img.alt=name;
+    <div class="about">
+      <h2>About</h2>
+      <p>I'm all about GNU and Linux — free as in freedom, not just free coffee.<br>
+      I live in the terminal and sometimes it lives in me.</p>
+      <ul>
+        <li>My uptime is longer than most servers’ warranty.</li>
+        <li>sudo make me a sandwich — and it obeys.</li>
+        <li>I don't reboot. I respawn.</li>
+        <li>If it compiles, it ships. If it segfaults, that’s a feature.</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <strong>Project</strong><br>
+      <a href="https://sidewalksndskeletons.github.io/gamescope-gui/" target="_blank" style="color:#faa;text-decoration:none;">
+        <div style="border:1px solid #700; padding:6px; border-radius:6px; display:inline-block; margin-top:6px;">
+          🧠 Owner of gamescope-gui
+        </div>
+      </a>
+    </div>
+
+    <div class="gallery" id="gallery"></div>
+  </div>
+
+<script>
+  // Persistent local visitor count
+  const counterKey = 'sidewalksndskeletons_visitors';
+  let count = localStorage.getItem(counterKey);
+  if (!count) count = 0;
+  count = parseInt(count) + 1;
+  localStorage.setItem(counterKey, count);
+  document.getElementById('visitorDisplay').textContent = `Visitors (local): ${count}`;
+
+  // Dynamic gallery with multi-extension support + cache buster
+  const gallery = document.getElementById('gallery');
+  const imageNames = ['1', '2', '3', '4', '5', '6'];
+  const exts = ['jpg', 'jpeg', 'png', 'webp'];
+  const cacheBust = Date.now();
+
+  imageNames.forEach(name => {
+    for (const ext of exts) {
+      const img = document.createElement('img');
+      img.src = `images/${name}.${ext}?v=${cacheBust}`;
+      img.onerror = () => img.remove();
+      img.alt = name;
       gallery.appendChild(img);
-    });
-  </script>
+    }
+  });
+
+  // Ensure video reloads properly (GitHub caching)
+  const video = document.getElementById('terryVid');
+  video.src = `TD/TD.mp4?v=${Date.now()}`;
+</script>
+
 </body>
 </html>
