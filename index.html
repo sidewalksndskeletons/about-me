@@ -52,13 +52,14 @@
     .bio-video video{width:100%;height:100%;max-height:360px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);object-fit:cover}
 
     .gallery-scroll{max-height:420px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding-right:8px}
-    .gallery-scroll img{width:100%;height:160px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+    .gallery-scroll img, .gallery-scroll video{width:100%;height:160px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
 
     .project-card{margin-top:16px;padding:14px;border-radius:12px;background:linear-gradient(145deg,rgba(255,59,59,0.06),rgba(255,59,59,0.02));border:1px solid rgba(255,59,59,0.12);box-shadow:0 6px 18px rgba(0,0,0,0.6)}
 
-    .lightbox{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,4,6,0.8);z-index:9999;opacity:0;pointer-events:none;transition:opacity .18s}
+    .lightbox{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,4,6,0.85);z-index:9999;opacity:0;pointer-events:none;transition:opacity .18s}
     .lightbox.show{opacity:1;pointer-events:auto}
-    .lightbox img{max-width:90vw;max-height:90vh;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.7)}
+    .lb-inner{max-width:92vw;max-height:92vh;display:flex;align-items:center;justify-content:center}
+    .lb-inner img, .lb-inner video{max-width:90vw;max-height:90vh;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.7)}
     .lb-btn{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.05);color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
 
     footer{text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
@@ -80,6 +81,7 @@
         <a href="https://www.youtube.com/@swasmi" target="_blank" title="YouTube"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="YT"/></a>
         <a href="https://steamcommunity.com/id/Tomo_Takino/" target="_blank" title="Steam"><img src="https://cdn.simpleicons.org/steam/ffffff" alt="Steam"/></a>
         <a href="https://www.roblox.com/users/9622213401/profile" target="_blank" title="Roblox"><img src="https://cdn.simpleicons.org/roblox/ffffff" alt="Roblox"/></a>
+        <div style="width:6px"></div>
       </div>
 
       <div class="discord-row" id="discordRow">
@@ -139,7 +141,7 @@
 
   <div id="lightbox" class="lightbox" aria-hidden="true">
     <button class="lb-btn" id="lbPrev" style="position:absolute;left:18px;">❮</button>
-    <img id="lbImg" src="" alt="" />
+    <div class="lb-inner" id="lbInner"></div>
     <button class="lb-btn" id="lbNext" style="position:absolute;right:18px;">❯</button>
   </div>
 
@@ -150,34 +152,41 @@
       const imagesPath = 'images';
       const galleryEl = document.getElementById('gallery');
       const cacheBust = Date.now();
-      const allowed = ['.png','.jpg','.jpeg','.webp','.gif','.svg'];
-      function isImage(name){ const lower = name.toLowerCase(); return allowed.some(ext => lower.endsWith(ext)); }
+      const allowedImageExt = ['.png','.jpg','.jpeg','.webp','.gif','.svg'];
+      const allowedVideoExt = ['.mp4','.webm','.mov'];
+      function getExt(name){ return name.slice((Math.max(0, name.lastIndexOf('.')) || Infinity)).toLowerCase(); }
+      function isImage(name){ const ext = getExt(name); return allowedImageExt.includes(ext); }
+      function isVideo(name){ const ext = getExt(name); return allowedVideoExt.includes(ext); }
 
-      async function loadRepoImages(){
+      async function loadRepoMedia(){
         try{
           const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${imagesPath}`;
           const res = await fetch(apiUrl);
           if(!res.ok) throw new Error('no images path or rate-limited');
           const files = await res.json();
-          const images = files.filter(f => f.type === 'file' && isImage(f.name));
-          if(images.length === 0){
-            galleryEl.innerHTML = '<div style="color:var(--muted)">No images found in repo path: ' + imagesPath + '</div>';
+          const mediaFiles = files.filter(f => f.type === 'file' && (isImage(f.name) || isVideo(f.name)));
+          if(mediaFiles.length === 0){
+            galleryEl.innerHTML = '<div style="color:var(--muted)">No media found in repo path: ' + imagesPath + '</div>';
             return;
           }
-          const urls = [];
-          images.forEach(file => {
+          const items = [];
+          mediaFiles.forEach(file => {
             const url = file.download_url + '?v=' + cacheBust;
-            urls.push(url);
-            const img = document.createElement('img'); img.src = url; img.alt = file.name; img.loading = 'lazy'; img.onerror = ()=>img.remove();
-            img.addEventListener('click', ()=> openLightbox(urls.indexOf(url)) );
-            galleryEl.appendChild(img);
+            const type = isVideo(file.name) ? 'video' : 'image';
+            items.push({url, type, name: file.name});
+            if(type === 'image'){
+              const img = document.createElement('img'); img.src = url; img.alt = file.name; img.loading = 'lazy'; img.onerror = ()=>img.remove(); img.addEventListener('click', ()=> openLightbox(items.indexOf(items.find(i=>i.url===url)))); galleryEl.appendChild(img);
+            } else {
+              const vid = document.createElement('video'); vid.src = url; vid.muted = true; vid.loop = true; vid.playsInline = true; vid.preload = 'metadata'; vid.setAttribute('aria-label', file.name); vid.addEventListener('click', ()=> openLightbox(items.indexOf(items.find(i=>i.url===url)))); vid.addEventListener('error', ()=>vid.remove()); galleryEl.appendChild(vid);
+            }
           });
-          initLightbox(urls);
+          initLightbox(items);
         }catch(err){
-          console.warn('Failed to load images from GitHub API:', err);
+          console.warn('Failed to load media from GitHub API:', err);
+          galleryEl.innerHTML = '<div style="color:var(--muted)">Failed to load gallery.</div>';
         }
       }
-      loadRepoImages();
+      loadRepoMedia();
 
       async function loadPfpFromRepo(){
         try{
@@ -185,7 +194,7 @@
           const res = await fetch(apiUrl);
           if(!res.ok) throw new Error('no pfp path');
           const files = await res.json();
-          const imgs = files.filter(f => f.type === 'file' && isImage(f.name));
+          const imgs = files.filter(f => f.type === 'file' && allowedImageExt.includes(getExt(f.name)));
           if(imgs.length === 0) throw new Error('no image in pfp folder');
           const first = imgs[0];
           const imgEl = document.createElement('img'); imgEl.src = first.download_url + '?v=' + cacheBust; imgEl.alt = 'pfp';
@@ -198,16 +207,20 @@
       loadPfpFromRepo();
 
       const lightbox = document.getElementById('lightbox');
-      const lbImg = document.getElementById('lbImg');
+      const lbInner = document.getElementById('lbInner');
       const lbPrev = document.getElementById('lbPrev');
       const lbNext = document.getElementById('lbNext');
-      let lbUrls = [];
+      let lbItems = [];
       let lbIndex = 0;
-      function initLightbox(urls){ window._lbInit = true; lbUrls = urls.slice(); document.addEventListener('keydown', (e)=>{ if(!lightbox.classList.contains('show')) return; if(e.key === 'ArrowLeft') showPrev(); if(e.key === 'ArrowRight') showNext(); if(e.key === 'Escape') closeLightbox(); }); lbPrev.addEventListener('click', showPrev); lbNext.addEventListener('click', showNext); lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) closeLightbox(); }); }
-      function openLightbox(index){ if(!lbUrls || lbUrls.length === 0) return; lbIndex = index; lbImg.src = lbUrls[lbIndex]; lightbox.classList.add('show'); lightbox.setAttribute('aria-hidden','false'); }
-      function closeLightbox(){ lightbox.classList.remove('show'); lightbox.setAttribute('aria-hidden','true'); lbImg.src=''; }
-      function showPrev(){ lbIndex = (lbIndex - 1 + lbUrls.length) % lbUrls.length; lbImg.src = lbUrls[lbIndex]; }
-      function showNext(){ lbIndex = (lbIndex + 1) % lbUrls.length; lbImg.src = lbUrls[lbIndex]; }
+
+      function initLightbox(items){ lbItems = items.slice(); document.addEventListener('keydown', (e)=>{ if(!lightbox.classList.contains('show')) return; if(e.key === 'ArrowLeft') showPrev(); if(e.key === 'ArrowRight') showNext(); if(e.key === 'Escape') closeLightbox(); }); lbPrev.addEventListener('click', showPrev); lbNext.addEventListener('click', showNext); lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) closeLightbox(); }); }
+
+      function clearLbInner(){ lbInner.innerHTML = ''; }
+      function openLightbox(index){ if(!lbItems || lbItems.length === 0) return; lbIndex = index; renderLbItem(lbItems[lbIndex]); lightbox.classList.add('show'); lightbox.setAttribute('aria-hidden','false'); }
+      function renderLbItem(item){ clearLbInner(); if(!item) return; if(item.type === 'image'){ const i = document.createElement('img'); i.src = item.url; i.alt = item.name; lbInner.appendChild(i); } else { const v = document.createElement('video'); v.src = item.url; v.controls = true; v.autoplay = true; v.playsInline = true; v.style.maxWidth='90vw'; v.style.maxHeight='90vh'; lbInner.appendChild(v); } }
+      function closeLightbox(){ clearLbInner(); lightbox.classList.remove('show'); lightbox.setAttribute('aria-hidden','true'); }
+      function showPrev(){ lbIndex = (lbIndex - 1 + lbItems.length) % lbItems.length; renderLbItem(lbItems[lbIndex]); }
+      function showNext(){ lbIndex = (lbIndex + 1) % lbItems.length; renderLbItem(lbItems[lbIndex]); }
 
       (async function setVideo(){
         const videoEl = document.getElementById('terryVid');
